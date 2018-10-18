@@ -3,14 +3,14 @@ from flask import render_template
 from flask_pymongo import PyMongo
 from flask import abort, jsonify, redirect, render_template
 from flask import request, url_for
-from .forms import ProductForm
+from forms import ProductForm
 from bson.objectid import ObjectId
 from flask_login import LoginManager, current_user
 from flask_login import login_user, logout_user
 from flask_login import login_required
 
-from .forms import LoginForm
-from .models import User
+from forms import LoginForm
+from models import User
 
 import json
 
@@ -18,8 +18,8 @@ import bson
 
 app = Flask(__name__)
 
-app.config['MONGO_DBNAME'] = 'foodb'
-app.config['MONGO_URI'] = 'mongodb://localhost:27017/foodb'
+app.config['MONGO_DBNAME'] = 'drac'
+app.config['MONGO_URI'] = mongodb://<dbuser>:<dbpassword>@ds115533.mlab.com:15533/drac
 
 mongo = PyMongo(app)
 
@@ -105,9 +105,9 @@ def product_edit(product_id):
     """Provide HTML form to edit a product."""
     form = ProductForm(request.form)
     if request.method == 'POST' and form.validate():
-
+        
         mongo.db.products.update_one({'_id':ObjectId(product_id)},{'$set':{'name':request.form['name'], 'description':request.form['description'], 'price':request.form['price']}})
-
+        
         # Success. Send user back to full product list.
         return redirect(url_for('products_list'))
     # Either first load or validation error at this point.
@@ -131,7 +131,7 @@ def login():
         else:
             error = 'Incorrect username or password.'
     return render_template('user/login.html',
-                       form=form, error=error)
+                           form=form, error=error)
 
 @app.route('/logout/')
 def logout():
